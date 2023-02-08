@@ -2,6 +2,7 @@ package integration;
 
 import app.foot.FootApi;
 import app.foot.controller.rest.Player;
+import app.foot.controller.rest.PlayerUpdate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest(classes = FootApi.class)
 @AutoConfigureMockMvc
@@ -32,6 +34,7 @@ class PlayerIntegrationTest {
         return Player.builder()
                 .id(1)
                 .name("J1")
+                .teamName("E1")
                 .isGuardian(false)
                 .build();
     }
@@ -40,6 +43,7 @@ class PlayerIntegrationTest {
         return Player.builder()
                 .id(2)
                 .name("J2")
+                .teamName("E1")
                 .isGuardian(false)
                 .build();
     }
@@ -48,6 +52,7 @@ class PlayerIntegrationTest {
         return Player.builder()
                 .id(3)
                 .name("J3")
+                .teamName("E2")
                 .isGuardian(false)
                 .build();
     }
@@ -86,6 +91,31 @@ class PlayerIntegrationTest {
 
         assertEquals(1, actual.size());
         assertEquals(toCreate, actual.get(0).toBuilder().id(null).build());
+    }
+    @Test
+    void update_players_ok() throws Exception {
+        PlayerUpdate toUpdate = PlayerUpdate.builder()
+                .id(1)
+                .name("name")
+                .build();
+        MockHttpServletResponse response = mockMvc
+                .perform(put("/players")
+                        .content(objectMapper.writeValueAsString(List.of(toUpdate)))
+                        .contentType("application/json")
+                        .accept("application/json"))
+                .andReturn().getResponse();
+        List<Player> actual =convertFromHttpResponse((response));
+
+        assertEquals(player1AfterUpdate(),actual.get(0));
+    }
+
+    private Player player1AfterUpdate () {
+        return Player.builder()
+                .id(player1().getId())
+                .name("name")
+                .teamName(player1().getTeamName())
+                .isGuardian(player1().getIsGuardian())
+                .build();
     }
 
     private List<Player> convertFromHttpResponse(MockHttpServletResponse response)

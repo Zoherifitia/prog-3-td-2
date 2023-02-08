@@ -1,7 +1,8 @@
 package app.foot.controller.rest.mapper;
 
 import app.foot.controller.rest.Player;
-import lombok.AllArgsConstructor;
+import app.foot.controller.rest.PlayerUpdate;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,4 +25,13 @@ public class PlayerRestMapper {
                 .teamName(rest.getTeamName())
                 .build();
     }
+
+    public app.foot.model.PlayerUpdate toDomain(PlayerUpdate rest) {
+        return app.foot.model.PlayerUpdate.builder()
+                .id(rest.getId())
+                .name(rest.getName())
+                .isGuardian(rest.getIsGuardian())
+                .build();
+    }
+
 }

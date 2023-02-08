@@ -65,6 +65,8 @@ public class PlayerMapperTest {
         assertEquals(rakotoScorer(), actual);
     }
 
+
+
     @Test
     void player_scorer_to_entity_ok() {
         Instant now = Instant.now();
