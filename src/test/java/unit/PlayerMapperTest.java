@@ -65,7 +65,20 @@ public class PlayerMapperTest {
         assertEquals(rakotoScorer(), actual);
     }
 
+    @Test
+    void player_entity_to_entity_ok(){
+        PlayerEntity expected= entityRakoto();
+        when(teamRepositoryMock.findByName("Barea")).thenReturn(teamBarea());
+        PlayerEntity actual = subject.toEntity(Player.builder()
+                        .id(1)
+                        .name("Rakoto")
+                        .isGuardian(false)
+                        .teamName("Barea")
+                        .build());
 
+        assertEquals(expected,actual);
+
+    }
 
     @Test
     void player_scorer_to_entity_ok() {
