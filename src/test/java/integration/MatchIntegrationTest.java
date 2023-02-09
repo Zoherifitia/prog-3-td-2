@@ -21,6 +21,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = FootApi.class)
@@ -58,6 +59,26 @@ class MatchIntegrationTest {
         assertTrue(actual.contains(expectedMatch2()));
         assertTrue(actual.contains(expectedMatch1()));
         assertTrue(actual.contains(expectedMatch3()));
+    }
+
+    @Test
+    void add_goals_ok() throws Exception {
+        PlayerScorer goals = PlayerScorer.builder()
+                .player(player1())
+                .scoreTime(80)
+                .isOG(false)
+                .build();
+        MockHttpServletResponse response = mockMvc.perform(post("/matches/3/goals")
+                        .content(objectMapper.writeValueAsString(goals))
+                        .contentType("application/json")
+                        .accept("application/json"))
+                .andReturn()
+                .getResponse();
+        Match actual = objectMapper.readValue(
+                response.getContentAsString(), Match.class);
+        assertEquals(HttpStatus.OK.value(),response.getStatus());
+
+
     }
 
     private static Match expectedMatch2() {
